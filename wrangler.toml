@@ -1,0 +1,21 @@
+name = "webrtc-chat"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+
+# Workers Sites 静态资源
+[site]
+bucket = "./public"
+
+# KV 命名空间绑定
+[[kv_namespaces]]
+binding = "ROOMS"
+id = "0a010c14b3904fffae0610a55b36af6a"
+
+# 构建配置
+[build]
+command = ""
+
+# 路由配置 (自定义域名)
+[[routes]]
+pattern = "chat.wvkmind.com"
+custom_domain = true

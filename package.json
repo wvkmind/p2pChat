@@ -1,0 +1,18 @@
+{
+  "name": "webrtc-chat-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0",
+    "@fastify/static": "^9.0.0",
+    "fastify": "^5.6.2"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

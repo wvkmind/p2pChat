@@ -1,6 +1,6 @@
 /**
  * WebSocket 聊天服务器 - Node.js (Fastify) 版
- * 简化架构：直接转发，不再使用 WebRTC
+ * 修复版：增强错误处理和 API 兼容性
  */
 
 const fastify = require('fastify')({ logger: true });
@@ -20,10 +20,13 @@ const rooms = new Map();
 
 fastify.register(async function (fastify) {
     fastify.get('/ws', { websocket: true }, (connection, req) => {
+        // 兼容性处理：取决于版本，有时是 socket，有时是 socketStream
+        const socket = connection.socket || connection;
+
         const { roomId } = req.query;
 
         if (!roomId) {
-            connection.socket.close();
+            socket.close();
             return;
         }
 
@@ -32,31 +35,35 @@ fastify.register(async function (fastify) {
             rooms.set(roomId, new Set());
         }
         const room = rooms.get(roomId);
-        room.add(connection.socket);
+        room.add(socket);
 
         fastify.log.info(`Client joined room ${roomId}. Total: ${room.size}`);
 
         // 通知其他人：有人加入了
-        broadcast(roomId, { type: 'system', text: '新用户加入房间' }, connection.socket);
+        broadcast(roomId, { type: 'system', text: '新用户加入房间' }, socket);
 
-        connection.socket.on('message', (message) => {
+        socket.on('message', (message) => {
             try {
-                const data = JSON.parse(message);
+                const data = JSON.parse(message.toString()); // 确保转为字符串
                 // 广播消息给房间内其他人
-                broadcast(roomId, data, connection.socket);
+                broadcast(roomId, data, socket);
             } catch (err) {
                 fastify.log.error('Message parse error');
             }
         });
 
-        connection.socket.on('close', () => {
-            room.delete(connection.socket);
+        socket.on('close', () => {
+            room.delete(socket);
             fastify.log.info(`Client left room ${roomId}. Total: ${room.size}`);
             if (room.size === 0) {
                 rooms.delete(roomId);
             } else {
                 broadcast(roomId, { type: 'system', text: '用户离开房间' }, null);
             }
+        });
+
+        socket.on('error', (err) => {
+            fastify.log.error(`Socket error: ${err.message}`);
         });
     });
 });
@@ -69,7 +76,7 @@ function broadcast(roomId, data, senderSocket) {
     const msgString = JSON.stringify(data);
     for (const client of room) {
         // 发送给除了自己以外的人 (或者如果是系统消息，发给所有人)
-        if (client !== senderSocket && client.readyState === 1) {
+        if (client !== senderSocket && client.readyState === 1) { // 1 = OPEN
             client.send(msgString);
         }
     }

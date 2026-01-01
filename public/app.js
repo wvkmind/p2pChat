@@ -111,9 +111,6 @@ function sendMessage() {
     if (!text || !socket || socket.readyState !== WebSocket.OPEN) return;
 
     // 发送给服务器
-    socket.send(JSON.stringify({ type: 'msg', text: '我是你' })); // 简单 hack: 这里的已发送其实不重要，只需要把实际内容发出去
-
-    // 实际上我们发具体内容
     socket.send(JSON.stringify({ type: 'msg', text: text }));
 
     // 自己界面显示

@@ -10,33 +10,63 @@
 </head>
 
 <body>
-  <div class="container">
-    <header class="header">
-      <h1>🔗 WebRTC P2P 聊天</h1>
-      <p class="subtitle">Cloudflare Workers 信令服务器演示</p>
-    </header>
+  <div class="app-container">
+    <div class="glass-card">
 
-    <!-- 连接面板 -->
-    <div id="connect-panel" class="panel">
-      <div class="panel-content">
-        <div class="input-group-vertical">
-          <input type="text" id="room-input" placeholder="输入房间 ID" class="input">
-          <input type="password" id="password-input" placeholder="房间密码 (选填，加密聊天)" class="input">
+      <!-- 顶部状态栏 -->
+      <header class="app-header">
+        <div class="logo-area">
+          <span class="logo-icon">💬</span>
+          <span class="app-title">Private Chat</span>
+        </div>
+        <div id="status-badge" class="status-badge disconnected">
+          <span class="status-dot"></span>
+          <span id="status-text">离线</span>
+        </div>
+      </header>
+
+      <!-- 连接面板 (登录页) -->
+      <div id="connect-panel" class="view active">
+        <div class="welcome-text">
+          <h2>开启加密对话</h2>
+          <p>端到端加密 • 无痕 • 安全</p>
         </div>
 
-        <div class="button-group">
-          <button id="create-btn" class="btn btn-primary">
-            <span class="btn-icon">✨</span> 创建房间
-          </button>
-          <button id="join-btn" class="btn btn-secondary">
-            <span class="btn-icon">🚀</span> 加入房间
+        <div class="form-group">
+          <div class="input-wrapper">
+            <span class="icon">#</span>
+            <input type="text" id="room-input" placeholder="房间号 (例如: room1)" autocomplete="off">
+          </div>
+          <div class="input-wrapper">
+            <span class="icon">🔒</span>
+            <input type="password" id="password-input" placeholder="加密密码 (选填)" autocomplete="new-password">
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button id="create-btn" class="btn primary-btn">创建新房间</button>
+          <button id="join-btn" class="btn secondary-btn">加入房间</button>
+        </div>
+      </div>
+
+      <!-- 聊天面板 -->
+      <div id="chat-panel" class="view">
+        <div id="messages" class="messages-area"></div>
+
+        <div class="input-area">
+          <input type="text" id="message-input" placeholder="输入消息..." autocomplete="off" disabled>
+          <button id="send-btn" class="btn send-btn" disabled>
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
           </button>
         </div>
       </div>
+
+      <!-- 日志浮层 (默认隐藏) -->
+      <div id="logs" class="logs-overlay hidden"></div>
+
     </div>
-
-    <!-- ... 省略中间代码 ... -->
-
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>

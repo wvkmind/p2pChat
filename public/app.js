@@ -50,51 +50,45 @@ async function createRoom() {
 // 加入房间 (连接 WebSocket)
 function joinRoom(id) {
     if (!id) {
-        log('请输入房间 ID', 'error');
+        alert('请输入房间号');
         return;
     }
 
     roomId = id;
     currentPassword = passwordInput.value.trim();
 
-    if (currentPassword) {
-        log('🔒 已启用端到端加密', 'success');
-    } else {
-        log('⚠️ 未设置密码，聊天将以明文传输', 'warning');
-    }
-
-    log(`正在连接房间: ${id}...`);
-
-    // 禁用按钮
-    createBtn.disabled = true;
+    // 按钮反馈
     joinBtn.disabled = true;
+    joinBtn.textContent = '连接中...';
 
     // 建立连接
     const url = `${WS_URL}?roomId=${id}`;
     socket = new WebSocket(url);
 
     socket.onopen = () => {
-        log('WebSocket 连接成功!', 'success');
-        showStatus(`房间 ID: ${roomId}`, '在线');
-        statusDot.classList.add('connected');
+        updateStatus('connected');
+        switchView('chat');
 
-        // 启用聊天
+        // 恢复按钮
+        joinBtn.disabled = false;
+        joinBtn.textContent = '加入房间';
+
+        // 启用聊天输入
         messageInput.disabled = false;
         sendBtn.disabled = false;
         messageInput.focus();
+
+        addSystemMessage(`已进入房间: ${roomId}`);
+        if (currentPassword) addSystemMessage('🔒 端到端加密已启用');
     };
 
     socket.onclose = () => {
-        log('连接已断开', 'error');
-        statusDot.classList.remove('connected');
-        statusDot.classList.add('error');
-        statusText.textContent = '离线';
+        updateStatus('disconnected');
         messageInput.disabled = true;
         sendBtn.disabled = true;
 
-        // 允许重连
-        createBtn.disabled = false;
-        joinBtn.disabled = false;
+        // 5秒后自动切换回登录页？或者留在这里看历史消息
+        // switchView('login');
     };
 
     socket.onmessage = (event) => {
@@ -133,8 +127,11 @@ function joinRoom(id) {
     };
 
     socket.onerror = (err) => {
-        log('连接发生错误', 'error');
+        updateStatus('error');
         console.error(err);
+        joinBtn.disabled = false;
+        joinBtn.textContent = '加入房间';
+        alert('连接失败，请检查网络');
     };
 }
 
@@ -159,22 +156,41 @@ function sendMessage() {
     messageInput.value = '';
 }
 
-// 显示状态面板
-function showStatus(room, status) {
-    connectPanel.classList.add('hidden');
-    statusPanel.classList.remove('hidden');
-    chatPanel.classList.remove('hidden');
-    roomInfo.textContent = room;
-    statusText.textContent = status;
+// 状态更新 (适配新 UI)
+function updateStatus(status) {
+    const badge = document.getElementById('status-badge');
+    const text = document.getElementById('status-text');
+    badge.className = 'status-badge';
+
+    if (status === 'connected') {
+        badge.classList.add('connected');
+        text.textContent = '在线';
+    } else if (status === 'disconnected') {
+        badge.classList.add('disconnected');
+        text.textContent = '离线';
+    } else if (status === 'error') {
+        badge.classList.add('error');
+        text.textContent = '错误';
+    }
 }
 
-// UI 辅助函数
+// 切换视图 (适配新 UI)
+function switchView(viewName) {
+    document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+
+    if (viewName === 'chat') {
+        document.getElementById('chat-panel').classList.add('active');
+        document.getElementById('connect-panel').classList.remove('active');
+    } else {
+        document.getElementById('connect-panel').classList.add('active');
+        document.getElementById('chat-panel').classList.remove('active');
+    }
+}
+
+// UI 辅助函数 (日志显示在 console 或者浮层)
 function log(message, type = 'info') {
-    const entry = document.createElement('div');
-    entry.className = `log-entry ${type}`;
-    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-    logsDiv.appendChild(entry);
-    logsDiv.scrollTop = logsDiv.scrollHeight;
+    console.log(`[${type}] ${message}`);
+    // 可选：实现一个 Toast 提示
 }
 
 function addSystemMessage(text) {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
   <meta name="description" content="基于 Cloudflare Workers 的 WebRTC P2P 聊天验证框架">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="container">
     <header class="header">
@@ -17,53 +19,28 @@
     <!-- 连接面板 -->
     <div id="connect-panel" class="panel">
       <div class="panel-content">
+        <div class="input-group-vertical">
+          <input type="text" id="room-input" placeholder="输入房间 ID" class="input">
+          <input type="password" id="password-input" placeholder="房间密码 (选填，加密聊天)" class="input">
+        </div>
+
         <div class="button-group">
           <button id="create-btn" class="btn btn-primary">
-            <span class="btn-icon">✨</span>
-            创建房间
+            <span class="btn-icon">✨</span> 创建房间
           </button>
-          <div class="divider">或</div>
-          <div class="join-group">
-            <input type="text" id="room-input" placeholder="输入房间 ID" class="input">
-            <button id="join-btn" class="btn btn-secondary">
-              <span class="btn-icon">🚀</span>
-              加入
-            </button>
-          </div>
+          <button id="join-btn" class="btn btn-secondary">
+            <span class="btn-icon">🚀</span> 加入房间
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- 状态面板 -->
-    <div id="status-panel" class="panel hidden">
-      <div class="status-bar">
-        <div class="status-indicator">
-          <span id="status-dot" class="dot"></span>
-          <span id="status-text">等待连接...</span>
-        </div>
-        <div id="room-info" class="room-info"></div>
-      </div>
-    </div>
+    <!-- ... 省略中间代码 ... -->
 
-    <!-- 聊天面板 -->
-    <div id="chat-panel" class="panel hidden">
-      <div id="messages" class="messages"></div>
-      <div class="input-bar">
-        <input type="text" id="message-input" placeholder="输入消息..." class="input" disabled>
-        <button id="send-btn" class="btn btn-primary" disabled>
-          <span class="btn-icon">📤</span>
-          发送
-        </button>
-      </div>
-    </div>
-
-    <!-- 日志面板 -->
-    <details class="log-panel">
-      <summary>📋 连接日志</summary>
-      <div id="logs" class="logs"></div>
-    </details>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>

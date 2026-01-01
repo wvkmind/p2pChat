@@ -17,6 +17,7 @@ const chatPanel = document.getElementById('chat-panel');
 const createBtn = document.getElementById('create-btn');
 const joinBtn = document.getElementById('join-btn');
 const roomInput = document.getElementById('room-input');
+const passwordInput = document.getElementById('password-input');
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
 const roomInfo = document.getElementById('room-info');
@@ -24,6 +25,8 @@ const messagesDiv = document.getElementById('messages');
 const messageInput = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const logsDiv = document.getElementById('logs');
+
+let currentPassword = '';
 
 // 事件监听
 createBtn.addEventListener('click', createRoom);
@@ -52,6 +55,14 @@ function joinRoom(id) {
     }
 
     roomId = id;
+    currentPassword = passwordInput.value.trim();
+
+    if (currentPassword) {
+        log('🔒 已启用端到端加密', 'success');
+    } else {
+        log('⚠️ 未设置密码，聊天将以明文传输', 'warning');
+    }
+
     log(`正在连接房间: ${id}...`);
 
     // 禁用按钮
@@ -90,7 +101,29 @@ function joinRoom(id) {
         try {
             const data = JSON.parse(event.data);
             if (data.type === 'msg') {
-                addMessage(data.text, false);
+                let content = data.text;
+                let isEncrypted = data.encrypted;
+
+                // 尝试解密
+                if (isEncrypted) {
+                    if (!currentPassword) {
+                        content = '🔒 [加密消息] 请输入密码查看';
+                    } else {
+                        try {
+                            const bytes = CryptoJS.AES.decrypt(content, currentPassword);
+                            const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                            if (decrypted) {
+                                content = decrypted;
+                            } else {
+                                content = '🚫 [解密失败] 密码错误';
+                            }
+                        } catch (e) {
+                            content = '🚫 [解密失败] 数据损坏';
+                        }
+                    }
+                }
+
+                addMessage(content, false, isEncrypted);
             } else if (data.type === 'system') {
                 addSystemMessage(data.text);
             }
@@ -110,11 +143,19 @@ function sendMessage() {
     const text = messageInput.value.trim();
     if (!text || !socket || socket.readyState !== WebSocket.OPEN) return;
 
-    // 发送给服务器
-    socket.send(JSON.stringify({ type: 'msg', text: text }));
+    let payload = { type: 'msg', text: text };
 
-    // 自己界面显示
-    addMessage(text, true);
+    // 加密
+    if (currentPassword) {
+        const encrypted = CryptoJS.AES.encrypt(text, currentPassword).toString();
+        payload.text = encrypted;
+        payload.encrypted = true;
+    }
+
+    socket.send(JSON.stringify(payload));
+
+    // 自己界面显示 (直接显示原文，但标记为加密)
+    addMessage(text, true, !!currentPassword);
     messageInput.value = '';
 }
 
@@ -144,9 +185,14 @@ function addSystemMessage(text) {
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-function addMessage(text, isSent) {
+function addMessage(text, isSent, isEncrypted = false) {
     const msg = document.createElement('div');
     msg.className = `message ${isSent ? 'sent' : 'received'}`;
+
+    if (isEncrypted) {
+        text = '🔒 ' + text;
+    }
+
     msg.textContent = text;
     messagesDiv.appendChild(msg);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;

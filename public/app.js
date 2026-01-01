@@ -106,9 +106,6 @@ function joinRoom(id) {
         updateStatus('connected');
         switchView('chat');
 
-        // 显示分享按钮
-        shareBtn.classList.remove('hidden');
-
         // 恢复按钮状态
         activeBtn.disabled = false;
         activeBtn.textContent = originalText;
@@ -124,7 +121,6 @@ function joinRoom(id) {
 
     socket.onclose = () => {
         updateStatus('disconnected');
-        shareBtn.classList.add('hidden');
         messageInput.disabled = true;
         sendBtn.disabled = true;
 

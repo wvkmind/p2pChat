@@ -44,6 +44,7 @@ function generateId() {
 // 创建房间
 async function createRoom() {
     const id = generateId();
+    roomInput.value = id;
     joinRoom(id);
 }
 

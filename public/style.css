@@ -1,42 +1,57 @@
-/* CSS Reset & Variables */
+/* CSS Reset & Variables (Forest Theme 🌲) */
 :root {
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --bg-gradient-start: #f3f4f6;
-  --bg-gradient-end: #e5e7eb;
-  --card-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --bubble-sent: #2563eb;
-  --bubble-received: #f3f4f6;
+  --primary: #10b981;
+  /* Emerald 500 */
+  --primary-hover: #059669;
+  /* Emerald 600 */
+  --bg-gradient-start: #ecfdf5;
+  /* Off-white green */
+  --bg-gradient-end: #d1fae5;
+  --card-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --text-main: #064e3b;
+  /* Dark Green */
+  --text-muted: #374151;
+  --bubble-sent: #10b981;
+  --bubble-received: #ffffff;
   --bubble-text-sent: #ffffff;
-  --bubble-text-received: #111827;
+  --bubble-text-received: #064e3b;
   --success: #10b981;
   --error: #ef4444;
-  --shadow-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 40px -10px rgba(6, 78, 59, 0.2);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-gradient-start: #111827;
-    --bg-gradient-end: #0f172a;
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
-    --text-main: #f9fafb;
-    --text-muted: #9ca3af;
-    --bubble-sent: #3b82f6;
-    --bubble-received: #374151;
+    --bg-gradient-start: #064e3b;
+    /* Deep Forest */
+    --bg-gradient-end: #022c22;
+    /* Night Forest */
+    --card-bg: rgba(6, 78, 59, 0.35);
+    /* Glassy Green */
+    --glass-border: rgba(167, 243, 208, 0.1);
+    --text-main: #ecfdf5;
+    /* Mint white */
+    --text-muted: #a7f3d0;
+    --bubble-sent: #10b981;
+    --bubble-received: rgba(255, 255, 255, 0.1);
     --bubble-text-sent: #ffffff;
-    --bubble-text-received: #f3f4f6;
+    --bubble-text-received: #d1fae5;
   }
 }
 
+/* 增加一点叶子般的圆润感 */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
+  border-radius: 0;
+  /* reset */
+}
+
+input,
+.btn,
+.glass-card,
+.message {
+  border-radius: 12px;
+  /* Soft Organic Radius */
 }
 
 body {
@@ -351,4 +366,31 @@ input:focus {
     border-radius: 0;
     border: none;
   }
+}
+
+/* Utility Classes */
+.hidden {
+  display: none !important;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-icon-only {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-only:hover {
+  color: var(--primary);
+  background: rgba(0, 0, 0, 0.05);
 }

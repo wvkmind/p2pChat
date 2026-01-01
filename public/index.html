@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebRTC P2P 聊天</title>
-  <meta name="description" content="基于 Cloudflare Workers 的 WebRTC P2P 聊天验证框架">
+  <title>Forest Chat</title>
+  <meta name="description" content="私密、安全的树洞聊天">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,36 +16,45 @@
       <!-- 顶部状态栏 -->
       <header class="app-header">
         <div class="logo-area">
-          <span class="logo-icon">💬</span>
-          <span class="app-title">Private Chat</span>
+          <span class="logo-icon">🌲</span>
+          <span class="app-title">Forest Chat</span>
         </div>
-        <div id="status-badge" class="status-badge disconnected">
-          <span class="status-dot"></span>
-          <span id="status-text">离线</span>
+        <div class="header-actions">
+          <button id="share-btn" class="btn-icon-only hidden" title="复制邀请链接">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path
+                d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z" />
+            </svg>
+          </button>
+          <div id="status-badge" class="status-badge disconnected">
+            <span class="status-dot"></span>
+            <span id="status-text">离线</span>
+          </div>
         </div>
       </header>
 
       <!-- 连接面板 (登录页) -->
       <div id="connect-panel" class="view active">
         <div class="welcome-text">
-          <h2>开启加密对话</h2>
-          <p>端到端加密 • 无痕 • 安全</p>
+          <h2>树洞对话</h2>
+          <p>像在森林里低语一样私密</p>
         </div>
 
         <div class="form-group">
-          <div class="input-wrapper">
+          <!-- 隐藏了手动输入房间号，改用自动或链接 -->
+          <div class="input-wrapper hidden" id="room-input-wrapper">
             <span class="icon">#</span>
-            <input type="text" id="room-input" placeholder="房间号 (例如: room1)" autocomplete="off">
+            <input type="text" id="room-input" placeholder="房间号" autocomplete="off">
           </div>
           <div class="input-wrapper">
             <span class="icon">🔒</span>
-            <input type="password" id="password-input" placeholder="加密密码 (选填)" autocomplete="new-password">
+            <input type="password" id="password-input" placeholder="加密密码 (推荐)" autocomplete="new-password">
           </div>
         </div>
 
         <div class="action-buttons">
-          <button id="create-btn" class="btn primary-btn">创建新房间</button>
-          <button id="join-btn" class="btn secondary-btn">加入房间</button>
+          <button id="create-btn" class="btn primary-btn">🌲 开始新的对话</button>
+          <button id="join-btn" class="btn secondary-btn hidden">🔗 加入已有对话</button>
         </div>
       </div>
 

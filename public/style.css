@@ -380,17 +380,22 @@ input:focus {
 }
 
 .btn-icon-only {
-  background: transparent;
-  border: none;
-  padding: 8px;
-  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--text-main);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 }
 
 .btn-icon-only:hover {
-  color: var(--primary);
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--primary);
+  color: white;
+  transform: scale(1.05);
 }
